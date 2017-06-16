@@ -221,6 +221,7 @@ module IteratorsMD
         istop,  jstop  = split(last(R), V)
         CartesianRange(istart, istop), CartesianRange(jstart, jstop)
     end
+
 end  # IteratorsMD
 
 
@@ -310,6 +311,15 @@ index_lengths() = ()
 index_shape() = ()
 @inline index_shape(::Real, rest...) = index_shape(rest...)
 @inline index_shape(A::AbstractArray, rest...) = (indices(A)..., index_shape(rest...)...)
+
+# hashing function for CartesianIndex{N}
+function hash{N}(ci::CartesianIndex{N}, h::UInt)
+    local r::UInt = h + tuplehash_seed
+    for i in ci.I
+        r = hash(i,r)
+    end
+    return r
+end
 
 """
     LogicalIndex(mask)
